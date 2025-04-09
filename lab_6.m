@@ -41,8 +41,8 @@ k_1 = norm(origin' - P_1_c');
 k_2 = norm(B' - P_2_c') + l;
 
 q = [660 -30]*pi/180;
-l_1 = r_1 * q(1)
-l_2 = r_2 * q(2) + l
+l_1 = r_1 * q(1);
+l_2 = r_2 * q(2) + l;
 
 text(P_1(1), P_1(2)+r_1*2, num2str(q(1)*180/pi,'%.f°'), 'FontSize', 8, 'Color', 'red');
 text(P_2(1), P_2(2)+r_2*2, num2str(q(2)*180/pi,'%.f°'), 'FontSize', 8, 'Color', 'red');
@@ -56,10 +56,12 @@ P = [l_1*cos(-theta_1) l_1*sin(-theta_1)]';
 plot([P(1)  B(1)], [P(2)  B(2)], 'k-.','LineWidth', 2)
 plot([P(1)  A(1)], [P(2)  A(2)], 'k-.','LineWidth', 2)
 plot(P(1), P(2) ,'og','LineWidth', 5);
+title('Direct kinematics');
 xlim([-4 14])
 
 
 %% Inverse kinematics
+
 figure(2)
 h = fill(k(1,:), k(2,:), 'b');
 h.FaceAlpha = 0.1;
@@ -83,4 +85,5 @@ text(P_2(1), P_2(2)+r_2*2, num2str(q(2)*180/pi,'%.f°'), 'FontSize', 8, 'Color',
 plot([P(1)  B(1)], [P(2)  B(2)], 'k-.','LineWidth', 2)
 plot([P(1)  A(1)], [P(2)  A(2)], 'k-.','LineWidth', 2)
 plot(P(1), P(2) ,'og','LineWidth', 5);
+title('Inverse kinematics');
 xlim([-4 14])
