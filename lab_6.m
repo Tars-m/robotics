@@ -21,8 +21,8 @@ k = [A B C D];
 %% Direct kinematics
 
 figure(1)
-h = fill(k(1,:), k(2,:), 'b');
-h.FaceAlpha = 0.1;
+canv = fill(k(1,:), k(2,:), 'b');
+canv.FaceAlpha = 0.1;
 axis equal;
 hold on;
 
@@ -40,7 +40,7 @@ plot(P_2(1) + r_2 * cos(theta), P_2(2) + r_2 * sin(theta), 'b-', 'LineWidth', 1)
 k_1 = norm(origin' - P_1_c');
 k_2 = norm(B' - P_2_c') + l;
 
-q = [660 -30]*pi/180;
+q = [600 -100]*pi/180;
 l_1 = r_1 * q(1);
 l_2 = r_2 * q(2) + l;
 
@@ -61,10 +61,10 @@ xlim([-4 14])
 
 
 %% Inverse kinematics
-
+P = [5, -1]';
 figure(2)
-h = fill(k(1,:), k(2,:), 'b');
-h.FaceAlpha = 0.1;
+canv = fill(k(1,:), k(2,:), 'b');
+canv.FaceAlpha = 0.1;
 axis equal;
 hold on;
 
@@ -87,3 +87,100 @@ plot([P(1)  A(1)], [P(2)  A(2)], 'k-.','LineWidth', 2)
 plot(P(1), P(2) ,'og','LineWidth', 5);
 title('Inverse kinematics');
 xlim([-4 14])
+
+
+%% Manipulability 
+
+F = [P(1) P(2); (P(1)-l) P(2)];
+G = [r_1^2*q(1) 0; 0 r_2*(l+r_2*q(2))];
+J = F\G;
+[V, D] = eig(inv(J*J'));
+
+theta = linspace(0, 2*pi, 100);
+circle = [cos(theta); sin(theta)]; 
+
+axes_lengths = sqrt(diag(D));  % Semi-axis lengths
+scaled_circle = diag(axes_lengths) * circle;
+
+ellipsoid_points = V * scaled_circle + P;
+
+% Plot the ellipsoid
+plot(ellipsoid_points(1, :), ellipsoid_points(2, :), 'LineWidth', 1);
+axis equal;
+
+
+%% Manipulability grid
+
+figure(3)
+A = [0 0]';
+B = [l 0]';
+C = [l -h]';
+D = [0 -h]';
+k = [A B C D];
+canv = fill(k(1,:), k(2,:), 'b');
+canv.FaceAlpha = 0.1;
+hold on;
+grid on;
+[X, Y] = meshgrid(linspace(0, l, 5), linspace(-h, -1, 5));
+
+for i = 1:length(X(1,:))
+    for k = 1:length(X(:,1))
+        P = [X(k,i), Y(k,i)]';
+        l_1 = norm(A-P);
+        l_2 = norm(B-P);
+        
+        q = [l_1/r_1, (l_2-l)/r_2];
+        
+        F = [P(1) P(2); (P(1)-l) P(2)];
+        G = [r_1^2*q(1) 0; 0 r_2*(l+r_2*q(2))];
+        J = F\G;
+        [V, D] = eig(inv(J*J'));
+        
+        theta = linspace(0, 2*pi, 100);
+        circle = [cos(theta); sin(theta)]; 
+        
+        axes_lengths = sqrt(diag(D));  % Semi-axis lengths
+        scaled_circle = diag(axes_lengths) * circle;
+        
+        ellipsoid_points = V * scaled_circle + P;
+        
+        % Plot the ellipsoid
+        plot(ellipsoid_points(1, :), ellipsoid_points(2, :), 'b','LineWidth', 1);
+        hold on;
+    end
+end
+xlim([-4 14])
+title('Manipulability grid');
+
+
+
+%% Elipsoid volumes
+
+figure(4)
+
+[X, Y] = meshgrid(linspace(0, l, 100), linspace(-h, -1, 100));
+V = zeros(100,100);
+
+for i = 1:length(X(1,:))
+    for k = 1:length(X(:,1))
+        P = [X(k,i), Y(k,i)]';
+        l_1 = norm(A-P);
+        l_2 = norm(B-P);
+        
+        q = [l_1/r_1, (l_2-l)/r_2];
+        
+        F = [P(1) P(2); (P(1)-l) P(2)];
+        G = [r_1^2*q(1) 0; 0 r_2*(l+r_2*q(2))];
+        J = F\G;
+        V(k,i) = det(inv(J*J'));
+       
+    end
+end
+grid on;
+surf( V)
+imagesc([0, 10], [-6,-1], V)
+
+xlim([-4 14])
+ylim([-8, 2])
+title('Capability grid');
+colorbar
