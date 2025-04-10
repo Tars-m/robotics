@@ -61,55 +61,59 @@ xlim([-4 14])
 
 
 %% Inverse kinematics
-P = [5, -1]';
-figure(2)
-canv = fill(k(1,:), k(2,:), 'b');
-canv.FaceAlpha = 0.1;
-axis equal;
-hold on;
 
-quiver(origin(1), origin(2), x_0(1)-origin(1), x_0(2)-origin(2), 'r', 'LineWidth', 3)
-quiver(origin(1), origin(2), y_0(1)-origin(1), y_0(2)-origin(2), 'g', 'LineWidth', 3)
+P = [10, 1]';
+if P(1) >= 0 && P(1) <= l && P(2) <= 0 && P(2) >= -h
+    figure(2)
+    canv = fill(k(1,:), k(2,:), 'b');
+    canv.FaceAlpha = 0.1;
+    axis equal;
+    hold on;
+    
+    quiver(origin(1), origin(2), x_0(1)-origin(1), x_0(2)-origin(2), 'r', 'LineWidth', 3)
+    quiver(origin(1), origin(2), y_0(1)-origin(1), y_0(2)-origin(2), 'g', 'LineWidth', 3)
+    
+    plot([P_1_c(1)  A(1)], [P_1_c(2)  A(2)], 'k-.','LineWidth', 2)
+    plot([P_2_c(1)  B(1)], [P_2_c(2)  B(2)], 'k-.','LineWidth', 2)
+    plot(P_1(1) + r_1 * cos(theta), P_1(2) + r_1 * sin(theta), 'b-', 'LineWidth', 1);
+    plot(P_2(1) + r_2 * cos(theta), P_2(2) + r_2 * sin(theta), 'b-', 'LineWidth', 1);
+    
+    l_1 = norm(A-P);
+    l_2 = norm(B-P);
+    
+    q = [l_1/r_1, (l_2-l)/r_2];
+    text(P_1(1), P_1(2)+r_1*2, num2str(q(1)*180/pi,'%.f°'), 'FontSize', 8, 'Color', 'red');
+    text(P_2(1), P_2(2)+r_2*2, num2str(q(2)*180/pi,'%.f°'), 'FontSize', 8, 'Color', 'red');
+    plot([P(1)  B(1)], [P(2)  B(2)], 'k-.','LineWidth', 2)
+    plot([P(1)  A(1)], [P(2)  A(2)], 'k-.','LineWidth', 2)
+    plot(P(1), P(2) ,'og','LineWidth', 5);
+    title('Inverse kinematics');
+    xlim([-4 14])
 
-plot([P_1_c(1)  A(1)], [P_1_c(2)  A(2)], 'k-.','LineWidth', 2)
-plot([P_2_c(1)  B(1)], [P_2_c(2)  B(2)], 'k-.','LineWidth', 2)
-plot(P_1(1) + r_1 * cos(theta), P_1(2) + r_1 * sin(theta), 'b-', 'LineWidth', 1);
-plot(P_2(1) + r_2 * cos(theta), P_2(2) + r_2 * sin(theta), 'b-', 'LineWidth', 1);
-
-l_1 = norm(A-P);
-l_2 = norm(B-P);
-
-q = [l_1/r_1, (l_2-l)/r_2];
-text(P_1(1), P_1(2)+r_1*2, num2str(q(1)*180/pi,'%.f°'), 'FontSize', 8, 'Color', 'red');
-text(P_2(1), P_2(2)+r_2*2, num2str(q(2)*180/pi,'%.f°'), 'FontSize', 8, 'Color', 'red');
-plot([P(1)  B(1)], [P(2)  B(2)], 'k-.','LineWidth', 2)
-plot([P(1)  A(1)], [P(2)  A(2)], 'k-.','LineWidth', 2)
-plot(P(1), P(2) ,'og','LineWidth', 5);
-title('Inverse kinematics');
-xlim([-4 14])
-
-
-%% Manipulability 
-
-F = [P(1) P(2); (P(1)-l) P(2)];
-G = [r_1^2*q(1) 0; 0 r_2*(l+r_2*q(2))];
-J = F\G;
-[V, D] = eig(inv(J*J'));
-
-theta = linspace(0, 2*pi, 100);
-circle = [cos(theta); sin(theta)]; 
-
-axes_lengths = sqrt(diag(D));  % Semi-axis lengths
-scaled_circle = diag(axes_lengths) * circle;
-
-ellipsoid_points = V * scaled_circle + P;
-
-% Plot the ellipsoid
-plot(ellipsoid_points(1, :), ellipsoid_points(2, :), 'LineWidth', 1);
-axis equal;
+    %% Manipulability 
+    
+    F = [P(1) P(2); (P(1)-l) P(2)];
+    G = [r_1^2*q(1) 0; 0 r_2*(l+r_2*q(2))];
+    J = F\G;
+    [V, D] = eig(J*J');
+    
+    theta = linspace(0, 2*pi, 100);
+    circle = [cos(theta); sin(theta)]; 
+    
+    axes_lengths = sqrt(diag(D));  % Semi-axis lengths
+    scaled_circle = diag(axes_lengths) * circle;
+    
+    ellipsoid_points = V * scaled_circle + P;
+    
+    % Plot the ellipsoid
+    plot(ellipsoid_points(1, :), ellipsoid_points(2, :), 'LineWidth', 1);
+    axis equal;
+else
+    disp('Point is outside of the workspace.');
+end
 
 
-%% Manipulability grid
+%% Manipolability grid
 
 figure(3)
 A = [0 0]';
@@ -134,23 +138,30 @@ for i = 1:length(X(1,:))
         F = [P(1) P(2); (P(1)-l) P(2)];
         G = [r_1^2*q(1) 0; 0 r_2*(l+r_2*q(2))];
         J = F\G;
-        [V, D] = eig(inv(J*J'));
+        [V, D] = eig(J*J');
+        [V_f, D_f] = eig(inv((J*J')));
         
         theta = linspace(0, 2*pi, 100);
         circle = [cos(theta); sin(theta)]; 
         
-        axes_lengths = sqrt(diag(D));  % Semi-axis lengths
+        axes_lengths = sqrt(diag(D));
+        axes_lengths_f = sqrt(diag(D_f));
+
         scaled_circle = diag(axes_lengths) * circle;
-        
+        scaled_circle_force = diag(axes_lengths_f) * circle;
+
         ellipsoid_points = V * scaled_circle + P;
+        ellipsoid_points_force = V_f * scaled_circle_force + P;
         
         % Plot the ellipsoid
         plot(ellipsoid_points(1, :), ellipsoid_points(2, :), 'b','LineWidth', 1);
         hold on;
+        plot(ellipsoid_points_force(1, :), ellipsoid_points_force(2, :), 'r','LineWidth', 1);
+        hold on;
     end
 end
 xlim([-4 14])
-title('Manipulability grid');
+title('Manipolability grid');
 
 
 
@@ -172,7 +183,7 @@ for i = 1:length(X(1,:))
         F = [P(1) P(2); (P(1)-l) P(2)];
         G = [r_1^2*q(1) 0; 0 r_2*(l+r_2*q(2))];
         J = F\G;
-        V(k,i) = det(inv(J*J'));
+        V(k,i) = det(J*J');
        
     end
 end
