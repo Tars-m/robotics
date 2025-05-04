@@ -5,7 +5,7 @@ function plotReferenceSystem(ax, P, x, y, z, theta, rotationAxis)
     quiver3(ax, P(1), P(2), P(3), y(1)-P(1), y(2)-P(2), y(3)-P(3), 'g', 'LineWidth', 3);
     quiver3(ax, P(1), P(2), P(3), z(1)-P(1), z(2)-P(2), z(3)-P(3), 'b', 'LineWidth', 3);
 
-    if nargin < 6 || isempty(rotationAxis)
+    if nargin < 6 || isempty(rotationAxis) || isempty(theta)
         return;
     end
 
@@ -35,13 +35,6 @@ function plotReferenceSystem(ax, P, x, y, z, theta, rotationAxis)
     arc = (origin + r * (cos(angle).* u1 + sin(angle).* u2))';
 
     plot3(ax, arc(:,1), arc(:,2), arc(:,3), 'm', 'LineWidth', 1);
-
-    arrowStart = arc(end-1, :);
-    arrowEnd = arc(end, :);
-    dir = arrowEnd - arrowStart;
-    
-    quiver3(ax, arrowStart(1), arrowStart(2), arrowStart(3), ...
-            dir(1), dir(2), dir(3), 2, 'm', 'LineWidth', 1, 'MaxHeadSize', 1);
 
     angle = linspace(3/2*pi, 2*pi, nPoints);
     arc = (origin + r * (cos(angle).* u1 + sin(angle).* u2))';
