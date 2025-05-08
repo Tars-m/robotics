@@ -19,7 +19,8 @@ function [DH, P] = transformation_using_DH(ax, DH_0, P_0, a, alpha, d, phi, colo
         
         [P, xyz] = transformReferenceSystem(DH_0 * DH_);
         if plotRotationAxis & ii < length(a)
-            plotReferenceSystem(ax, P, xyz(:,1), xyz(:,2), xyz(:,3), rotationAxis{ii+1}, 'z');
+            plotReferenceSystem(ax, P, xyz(:,1), xyz(:,2), xyz(:,3),...
+                rotationAxis{ii+1}, 'z');
         else
             plotReferenceSystem(ax, P, xyz(:,1), xyz(:,2), xyz(:,3));
         end

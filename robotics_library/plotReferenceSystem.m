@@ -1,9 +1,13 @@
 function plotReferenceSystem(ax, P, x, y, z, theta, rotationAxis)
-    % Plots a 3D reference system and an optional rotation arc, oriented with local axes
+    % Plots a 3D reference system and an optional rotation arc,
+    % oriented with local axes
 
-    quiver3(ax, P(1), P(2), P(3), x(1)-P(1), x(2)-P(2), x(3)-P(3), 'r', 'LineWidth', 3);
-    quiver3(ax, P(1), P(2), P(3), y(1)-P(1), y(2)-P(2), y(3)-P(3), 'g', 'LineWidth', 3);
-    quiver3(ax, P(1), P(2), P(3), z(1)-P(1), z(2)-P(2), z(3)-P(3), 'b', 'LineWidth', 3);
+    quiver3(ax, P(1), P(2), P(3), x(1)-P(1), x(2)-P(2), x(3)-P(3),...
+        'r', 'LineWidth', 3);
+    quiver3(ax, P(1), P(2), P(3), y(1)-P(1), y(2)-P(2), y(3)-P(3),...
+        'g', 'LineWidth', 3);
+    quiver3(ax, P(1), P(2), P(3), z(1)-P(1), z(2)-P(2), z(3)-P(3),...
+        'b', 'LineWidth', 3);
 
     if nargin < 6 || isempty(rotationAxis) || isempty(theta)
         return;

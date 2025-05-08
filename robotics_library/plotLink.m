@@ -1,5 +1,6 @@
 function plotLink(ax, P_a, P_b, d, color)
-    % Plots a link (line) between two 3D points and optionally labels translation and sets color
+    % Plots a link (line) between two 3D points and optionally labels 
+    % translation and sets color
 
     if nargin < 5
         color = 'k';  % default color
