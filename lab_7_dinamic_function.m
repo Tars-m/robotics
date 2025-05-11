@@ -19,7 +19,7 @@ function q_dd = lab_7_dinamic_function(tau, theta_1, theta_2, theta_1_d, theta_2
     C = F\a_matrix(theta_1, theta_2, a_1, a_2)*M*e_matirx(theta_1, theta_2, theta_1_d, theta_2_d, a_1, a_2);
     g = [m_1*g*a_1*0.5*cos(theta_1)+m_2*g*(a_2*0.5*cos(theta_1+theta_2)+a_1*cos(theta_1));...
         m_2*g*a_2*0.5*cos(theta_1+theta_2)];
-    q_dd = B\(tau - C*theta_d) - g;
+    q_dd = B\(tau - C*theta_d - g);
 end
 
 function I = inertia(m, l)

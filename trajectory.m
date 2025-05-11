@@ -5,7 +5,7 @@ function [theta_lin, theta, xy, t_dis, t] = trajectory(t_max,a_max,js_tr)
     a_2 = 1;
     
     x_m = [0.6, 0.6, 0, -0.6, -0.6];
-    y_m = [0, 1.3, 0.9, 1.3, 0];
+    y_m = [0, 1.1, 1.6, 1.1, 0];
 
     xy = [x_m;y_m];
     t_dis = [0, t_max*0.2, t_max*0.5, t_max*0.8, t_max];
