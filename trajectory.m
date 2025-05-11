@@ -1,14 +1,38 @@
-function [theta_lin, theta, xy, t_dis, t] = trajectory(t_max,a_max)
-    t = linspace(0, t_max, 1000);
+function [theta_lin, theta, xy, t_dis, t] = trajectory(t_max,a_max,js_tr)
+    t = linspace(0, t_max, 10000);
     
     a_1 = 1;
     a_2 = 1;
     
     x_m = [0.6, 0.6, 0, -0.6, -0.6];
     y_m = [0, 1.3, 0.9, 1.3, 0];
+
     xy = [x_m;y_m];
     t_dis = [0, t_max*0.2, t_max*0.5, t_max*0.8, t_max];
     
+    if js_tr
+        n_interp = 15;
+        x_dense = [];
+        y_dense = [];
+        t_dense = [];
+     
+        for i = 1:length(x_m)-1
+            x_segment = linspace(x_m(i), x_m(i+1), n_interp);
+            y_segment = linspace(y_m(i), y_m(i+1), n_interp);
+            t_segment = linspace(t_dis(i), t_dis(i+1), n_interp);
+            
+            x_dense = [x_dense, x_segment(1:end-1)];
+            y_dense = [y_dense, y_segment(1:end-1)];
+            t_dense = [t_dense, t_segment(1:end-1)];
+        end
+        
+        x_m = [x_dense, x_m(end)];
+        y_m = [y_dense, y_m(end)];
+        t_dis = [t_dense, t_dis(end)];
+        
+        xy = [x_m; y_m];
+    end
+
     theta_1 = zeros(1,length(t_dis));
     theta_2 = zeros(1,length(t_dis));
     
